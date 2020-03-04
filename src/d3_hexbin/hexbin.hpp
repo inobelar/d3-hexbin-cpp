@@ -281,12 +281,12 @@ public:
 
     // -------------------------------------------------------------------------
 
-    std::string hexagon() const {
-        return "m" + _join(_hexagon_str(r), "l") + "z";
-    }
-
     static std::string hexagon(number_t radius_) {
         return "m" + _join(_hexagon_str(radius_), "l") + "z";
+    }
+
+    std::string hexagon() const {
+        return hexagon(r);
     }
 
     // -------------------------------------------------------------------------
