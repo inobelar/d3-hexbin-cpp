@@ -4,7 +4,7 @@
 
 - [ ] Fix `pathEqual()` in Tests
 - [ ] Implement 2 commented/missing Tests
-- [ ] Additionaly create non-standart `hexagon()` & `mesh()` methods for direct rendering (not path stringification)
+
 
 ## Usage
 
@@ -12,3 +12,7 @@ In your `*.pro` file add:
 ```qmake
 include(<path/to>/d3-hexbin-cpp/src/d3_hexbin.pri)
 ````
+
+## Notes
+
+- Contains extra/additional/non-standart `draw_hexagon()` & `draw_mesh()` methods for direct rendering (not path stringification)
