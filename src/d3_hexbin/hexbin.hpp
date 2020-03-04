@@ -376,15 +376,24 @@ public:
     // d3-path-cpp PathInterface API
 
     template <typename PathInterface>
-    static void draw_hexagon(PathInterface& path, number_t radius_) {
+    static void draw_hexagon(PathInterface& path, number_t center_x, number_t center_y, number_t radius_)
+    {
         const auto hex = _hexagon(radius_);
 
-        PointT curr = hex[0];
+        // curr = center
+        PointT curr;
+        curr[0] = center_x;
+        curr[1] = center_y;
+
+        // curr += hex[0]
+        curr[0] = curr[0] + hex[0][0];
+        curr[1] = curr[1] + hex[0][1];
+
         path.moveTo(curr[0], curr[1]);
 
         for(std::size_t i = 1; i < hex.size(); ++i)
         {
-            // cur += hex[i];
+            // curr += hex[i];
             curr[0] = curr[0] + hex[i][0];
             curr[1] = curr[1] + hex[i][1];
 
@@ -395,6 +404,16 @@ public:
     }
 
     template <typename PathInterface>
+    static void draw_hexagon(PathInterface& path, const PointT& center, number_t radius_) {
+        draw_hexagon(path, center[0], center[1], radius_);
+    }
+
+    template <typename PathInterface>
+    static void draw_hexagon(PathInterface& path, number_t radius_) {
+        draw_hexagon(path, 0, 0, radius_);
+    }
+
+    template <typename PathInterface>
     void draw_hexagon(PathInterface& path) {
         draw_hexagon(path, r);
     }
@@ -402,15 +421,17 @@ public:
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     template <typename PathInterface>
-    void draw_mesh(PathInterface& path) {
+    void draw_mesh(PathInterface& path)
+    {
         const auto hexagons = _hexagon(r);
 
-        for(const PointT& p : this->centers())
+        for(const PointT& center : this->centers())
         {
-            PointT curr;
-            // curr = p + hexagons[0]
-            curr[0] = p[0] + hexagons[0][0];
-            curr[1] = p[1] + hexagons[0][1];
+            PointT curr = center;
+
+            // curr += hexagons[0]
+            curr[0] = curr[0] + hexagons[0][0];
+            curr[1] = curr[1] + hexagons[0][1];
 
             path.moveTo(curr[0], curr[1]);
 
