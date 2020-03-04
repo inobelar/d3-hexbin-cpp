@@ -159,7 +159,10 @@ private:
     number_t dy;
 
     // -------------------------------------------------------------------------
+protected:
 
+    // NOTICE: that this method returns RELATIVE coordinates (dx, dy),
+    // not absolute coords.
     static std::array<PointT, 6> _hexagon(number_t radius) {
         number_t x0 = 0, y0 = 0;
 
@@ -366,6 +369,60 @@ public:
 
     extent_t extent() const {
         return { PointT{x0, y0}, PointT{x1, y1} };
+    }
+
+    // =========================================================================
+    // Non-standart EXPERIMENTAL API for direct drawing by using something like
+    // d3-path-cpp PathInterface API
+
+    template <typename PathInterface>
+    static void draw_hexagon(PathInterface& path, number_t radius_) {
+        const auto hex = _hexagon(radius_);
+
+        PointT curr = hex[0];
+        path.moveTo(curr[0], curr[1]);
+
+        for(std::size_t i = 1; i < hex.size(); ++i)
+        {
+            // cur += hex[i];
+            curr[0] = curr[0] + hex[i][0];
+            curr[1] = curr[1] + hex[i][1];
+
+            path.lineTo(curr[0], curr[1]);
+        }
+
+        path.closePath();
+    }
+
+    template <typename PathInterface>
+    void draw_hexagon(PathInterface& path) {
+        draw_hexagon(path, r);
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    template <typename PathInterface>
+    void draw_mesh(PathInterface& path) {
+        const auto hexagons = _hexagon(r);
+
+        for(const PointT& p : this->centers())
+        {
+            PointT curr;
+            // curr = p + hexagons[0]
+            curr[0] = p[0] + hexagons[0][0];
+            curr[1] = p[1] + hexagons[0][1];
+
+            path.moveTo(curr[0], curr[1]);
+
+            for(std::size_t i = 1; i < 4; ++i)
+            {
+                // curr += hexagons[i]
+                curr[0] = curr[0] + hexagons[i][0];
+                curr[1] = curr[1] + hexagons[i][1];
+
+                path.lineTo(curr[0], curr[1]);
+            }
+        }
     }
 
 };
